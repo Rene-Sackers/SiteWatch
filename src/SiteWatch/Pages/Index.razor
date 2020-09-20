@@ -1,0 +1,71 @@
+﻿@page "/"
+@inherits IndexBase
+
+@using SiteWatch.Providers.Interfaces
+
+@if (IsAddingWatcher)
+{
+	<Popup Title="Add watcher">
+		<Body>
+			<EditForm EditContext="AddWatcherEditContext" OnSubmit="SubmitAddWatcher">
+				<DataAnnotationsValidator />
+
+				<div class="form-group">
+					<label for="name">Name</label>
+					<InputText id="name" @bind-Value="AddWatcherModel.Name" class="form-control" autocomplete="off" />
+					<ValidationMessage For="@(() => AddWatcherModel.Name)" />
+				</div>
+				
+				<div class="form-group">
+					<button class="btn btn-light" type="button" @onclick="() => IsAddingWatcher = false">Cancel</button>
+					<button class="btn btn-primary" type="submit">Add</button>
+				</div>
+			</EditForm>
+		</Body>
+	</Popup>
+}
+
+@if (DeleteWatcher != null)
+{
+	<Popup Title="Delete watcher">
+		<Body>
+			Delete watcher "@DeleteWatcher.Name" and its @DeleteWatcher.Urls.Count url(s)?
+		</Body>
+		<Buttons>
+			<button class="btn btn-light" @onclick="() => DeleteWatcher = null">Cancel</button>
+			<button class="btn btn-danger" @onclick="ConfirmDeleteWatcher">Delete</button>
+		</Buttons>
+	</Popup>
+}
+
+<div class="container mt-4">
+	<h1 class="mb-4">Watches <button class="btn btn-success" @onclick="() => IsAddingWatcher = true">Add</button></h1>
+	<table class="table text-light">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Query selector</th>
+				<th>Urls</th>
+				<th>Interval</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var watcher in SettingsProvider.Settings.PageWatchers)
+			{
+				<tr>
+					<td>@watcher.Name</td>
+					<td>@watcher.QuerySelector</td>
+					<td>
+						@((MarkupString)string.Join("<br>", watcher.Urls))
+					</td>
+					<td>@watcher.Interval</td>
+					<td>
+						<a href="/Watchers/Edit/@watcher.Id" class="btn btn-primary">Edit</a>
+						<button class="btn btn-danger" @onclick="() => DeleteWatcher = watcher">Delete</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>

@@ -1,0 +1,59 @@
+﻿@page "/Watchers/Edit/{Id:int}"
+@inherits EditBase
+
+<div class="container mt-4">
+	<h1 class="mb-4">Edit watcher</h1>
+	
+	<div class="row">
+		<EditForm EditContext="EditContext" OnSubmit="Submit" class="col-md-6">
+			<DataAnnotationsValidator />
+
+			<div class="form-group">
+				<label for="@nameof(EditWatcherModel.Name)">Name</label>
+				<InputText id="@nameof(EditWatcherModel.Name)" @bind-Value="EditWatcherModel.Name" class="form-control" />
+				<ValidationMessage For="@(() => EditWatcherModel.Name)" />
+			</div>
+
+			<div class="form-group">
+				<label for="@nameof(EditWatcherModel.QuerySelector)">Query selector</label>
+				<InputText id="@nameof(EditWatcherModel.QuerySelector)" @bind-Value="EditWatcherModel.QuerySelector" class="form-control" />
+				<ValidationMessage For="@(() => EditWatcherModel.QuerySelector)" />
+			</div>
+
+			<div class="form-group">
+				<label for="@nameof(EditWatcherModel.Interval)">Interval</label>
+				<InputText id="@nameof(EditWatcherModel.Interval)" @bind-Value="EditWatcherModel.Interval" class="form-control" />
+				<ValidationMessage For="@(() => EditWatcherModel.Interval)" />
+			</div>
+			
+			<div class="form-group">
+				<label>URLs</label>
+				<table class="table">
+					<tbody>
+						@foreach (var url in EditWatcherModel.Urls)
+						{
+							<tr>
+								<td>@url</td>
+								<td>
+									<button class="btn btn-danger">Delete</button>
+								</td>
+							</tr>
+						}
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="2" class="text-center">
+								<button class="btn btn-success">Add</button>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+
+			<div class="form-group text-right">
+				<a href="/" class="btn btn-light">Cancel</a>
+				<button type="submit" class="btn btn-primary">Save</button>
+			</div>
+		</EditForm>
+	</div>
+</div>
