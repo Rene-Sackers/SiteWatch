@@ -32,6 +32,7 @@ namespace SiteWatch
 			services.AddSingleton<IWatchersSettingsProvider, WatchersWatchersSettingsProvider>();
 			services.AddSingleton<IHttpClientProvider, HttpClientProvider>();
 			services.AddSingleton<IWatchService, WatchService>();
+			services.AddSingleton<ITelegramBotClientProvider, TelegramBotClientProvider>();
 
 			services.AddTransient<IPageScrapeService, PageScrapeService>();
 			services.AddTransient<IPageWatchServiceFactory, PageWatchServiceFactory>();

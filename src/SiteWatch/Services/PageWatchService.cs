@@ -90,7 +90,7 @@ namespace SiteWatch.Services
 				pageState.LastChange = DateTimeOffset.Now;
 
 
-				_notificationService.NotifyPageChanged(_watcher, url, pageState.LastHtml, newHtml);
+				await _notificationService.NotifyPageChanged(_watcher, url, pageState.LastHtml, newHtml);
 
 				pageState.LastHtml = newHtml;
 

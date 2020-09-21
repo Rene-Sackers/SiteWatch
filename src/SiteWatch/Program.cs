@@ -1,4 +1,6 @@
 using System;
+using System.Diagnostics;
+using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -26,15 +28,17 @@ namespace SiteWatch
 			loggingConfiguration.AddTarget("console", coloredConsoleTarget);
 			loggingConfiguration.AddRule(LogLevel.Trace, LogLevel.Fatal, coloredConsoleTarget);
 
+			var logsFolder = Path.Join(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "logs");
+
 			var fileTarget = new FileTarget
 			{
-				FileName = "logs/server.log",
+				FileName = logsFolder + "/${shortdate}.log",
 				ArchiveAboveSize = 1024 * 1024 * 5, // 5 MB
 				Layout = nlogFormat
 			};
 
 			loggingConfiguration.AddTarget("file", fileTarget);
-			loggingConfiguration.AddRule(LogLevel.Trace, LogLevel.Fatal, fileTarget);
+			loggingConfiguration.AddRule(LogLevel.Info, LogLevel.Fatal, fileTarget);
 
 			LogManager.Configuration = loggingConfiguration;
 		}
