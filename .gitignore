@@ -365,3 +365,4 @@ FodyWeavers.xsd
 *.js.map
 *.css
 watch.json
+appsettings.*.json

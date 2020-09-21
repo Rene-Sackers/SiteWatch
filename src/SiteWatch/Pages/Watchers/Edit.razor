@@ -1,59 +1,115 @@
 ﻿@page "/Watchers/Edit/{Id:int}"
 @inherits EditBase
 
+@if (AddUrlModel != null)
+{
+	<Popup Title="Add URL">
+		<Body>
+			<EditForm EditContext="AddUrlEditContext" OnSubmit="AddUrlSubmit">
+				<DataAnnotationsValidator />
+
+				<div class="form-group">
+					<label for="@nameof(AddUrlModel.Url)">URL</label>
+					<InputText @bind-Value="AddUrlModel.Url" class="form-control"/>
+					<ValidationMessage For="@(() => AddUrlModel.Url)" />
+				</div>
+
+				<div class="form-group text-right">
+					<button class="btn btn-light" type="button" @onclick="() => AddUrlModel = null">Cancel</button>
+					<button class="btn btn-primary" type="submit">Add</button>
+				</div>
+			</EditForm>
+		</Body>
+	</Popup>
+}
+
+@if (DeleteUrl != null)
+{
+	<Popup Title="Delete URL">
+		<Body>
+			Are you sure you want to delete the URL "@DeleteUrl"?
+		</Body>
+		<Buttons>
+			<button class="btn btn-light" type="button" @onclick="() => DeleteUrl = null">Cancel</button>
+			<button class="btn btn-danger" type="button" @onclick="DeleteUrlSubmit">Delete</button>
+		</Buttons>
+	</Popup>
+}
+
+@if (PreviewQueryHtmlResult != null)
+{
+	<Popup Title="Preview query" Classes="container">
+		<Body>
+			@((MarkupString) PreviewQueryHtmlResult.Replace(Environment.NewLine, "<br>"))
+		</Body>
+		<Buttons>
+			<button class="btn btn-primary" @onclick="() => PreviewQueryHtmlResult = null">Close</button>
+		</Buttons>
+	</Popup>
+}
+
 <div class="container mt-4">
 	<h1 class="mb-4">Edit watcher</h1>
-	
-	<div class="row">
-		<EditForm EditContext="EditContext" OnSubmit="Submit" class="col-md-6">
-			<DataAnnotationsValidator />
 
-			<div class="form-group">
+	<EditForm EditContext="EditContext" OnSubmit="Submit">
+		<DataAnnotationsValidator />
+
+		<div class="form-row">
+			<div class="form-group col-md-6">
 				<label for="@nameof(EditWatcherModel.Name)">Name</label>
 				<InputText id="@nameof(EditWatcherModel.Name)" @bind-Value="EditWatcherModel.Name" class="form-control" />
 				<ValidationMessage For="@(() => EditWatcherModel.Name)" />
 			</div>
+		</div>
 
-			<div class="form-group">
+		<div class="form-row">
+			<div class="form-group col-md-6">
 				<label for="@nameof(EditWatcherModel.QuerySelector)">Query selector</label>
 				<InputText id="@nameof(EditWatcherModel.QuerySelector)" @bind-Value="EditWatcherModel.QuerySelector" class="form-control" />
 				<ValidationMessage For="@(() => EditWatcherModel.QuerySelector)" />
 			</div>
+		</div>
 
-			<div class="form-group">
+		<div class="form-row">
+			<div class="form-group col-md-6">
 				<label for="@nameof(EditWatcherModel.Interval)">Interval</label>
-				<InputText id="@nameof(EditWatcherModel.Interval)" @bind-Value="EditWatcherModel.Interval" class="form-control" />
+				<InputText id="@nameof(EditWatcherModel.Interval)" @bind-Value="EditWatcherModel.Interval" type="number" class="form-control" />
 				<ValidationMessage For="@(() => EditWatcherModel.Interval)" />
 			</div>
-			
-			<div class="form-group">
-				<label>URLs</label>
-				<table class="table">
-					<tbody>
-						@foreach (var url in EditWatcherModel.Urls)
-						{
-							<tr>
-								<td>@url</td>
-								<td>
-									<button class="btn btn-danger">Delete</button>
-								</td>
-							</tr>
-						}
-					</tbody>
-					<tfoot>
+		</div>
+
+		<div class="form-group">
+			<label>URLs</label>
+			<table class="table text-light">
+				<tbody>
+					@foreach (var url in EditWatcherModel.Urls)
+					{
 						<tr>
-							<td colspan="2" class="text-center">
-								<button class="btn btn-success">Add</button>
+							<td>
+								<a href="@url" target="_blank">@url</a>
+							</td>
+							<td>
+								<button class="btn btn-primary" type="button" @onclick="() => PreviewQuery(url)">Preview query</button>
+								<button class="btn btn-danger" type="button" @onclick="() => DeleteUrl = url">Delete</button>
 							</td>
 						</tr>
-					</tfoot>
-				</table>
-			</div>
+					}
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="2" class="text-center">
+							<button class="btn btn-success" type="button" @onclick="ShowAddUrl">Add</button>
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
 
+		<div class="form-row">
 			<div class="form-group text-right">
 				<a href="/" class="btn btn-light">Cancel</a>
 				<button type="submit" class="btn btn-primary">Save</button>
 			</div>
-		</EditForm>
-	</div>
+		</div>
+	</EditForm>
 </div>

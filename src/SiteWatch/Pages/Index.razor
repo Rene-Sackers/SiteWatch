@@ -1,8 +1,6 @@
 ﻿@page "/"
 @inherits IndexBase
 
-@using SiteWatch.Providers.Interfaces
-
 @if (IsAddingWatcher)
 {
 	<Popup Title="Add watcher">
@@ -43,6 +41,7 @@
 	<table class="table text-light">
 		<thead>
 			<tr>
+				<th>Id</th>
 				<th>Name</th>
 				<th>Query selector</th>
 				<th>Urls</th>
@@ -51,13 +50,14 @@
 			</tr>
 		</thead>
 		<tbody>
-			@foreach (var watcher in SettingsProvider.Settings.PageWatchers)
+			@foreach (var watcher in WatchersSettingsProvider.Settings.PageWatchers)
 			{
 				<tr>
+					<td>@watcher.Id</td>
 					<td>@watcher.Name</td>
 					<td>@watcher.QuerySelector</td>
 					<td>
-						@((MarkupString)string.Join("<br>", watcher.Urls))
+						@((MarkupString) string.Join("<br>", watcher.Urls))
 					</td>
 					<td>@watcher.Interval</td>
 					<td>

@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using SiteWatch.Models;
-using SiteWatch.Pages.Watchers;
 using SiteWatch.Providers.Interfaces;
 
 namespace SiteWatch.Pages
@@ -18,7 +17,7 @@ namespace SiteWatch.Pages
 	public class IndexBase : ComponentBase
 	{
 		[Inject]
-		public ISettingsProvider SettingsProvider { get; set; }
+		public IWatchersSettingsProvider WatchersSettingsProvider { get; set; }
 
 		[Inject]
 		public NavigationManager NavigationManager { get; set; }
@@ -52,7 +51,7 @@ namespace SiteWatch.Pages
 			if (!AddWatcherEditContext.Validate())
 				return;
 
-			var otherWatcherHasSameName = SettingsProvider.Settings.PageWatchers
+			var otherWatcherHasSameName = WatchersSettingsProvider.Settings.PageWatchers
 				.Any(pw => string.Equals(pw.Name, AddWatcherModel.Name, StringComparison.OrdinalIgnoreCase));
 			if (otherWatcherHasSameName)
 			{
@@ -60,22 +59,22 @@ namespace SiteWatch.Pages
 				return;
 			}
 
-			var nextId = SettingsProvider.Settings.PageWatchers.Any()
-				? SettingsProvider.Settings.PageWatchers.Max(pw => pw.Id) + 1
+			var nextId = WatchersSettingsProvider.Settings.PageWatchers.Any()
+				? WatchersSettingsProvider.Settings.PageWatchers.Max(pw => pw.Id) + 1
 				: 1;
 
-			SettingsProvider.Settings.PageWatchers.Add(new PageWatcher
+			WatchersSettingsProvider.Settings.PageWatchers.Add(new PageWatcher
 			{
 				Id = nextId,
 				Name = AddWatcherModel.Name
 			});
 
-			SettingsProvider.Save();
+			WatchersSettingsProvider.Save();
 
 			SetUpAddWatcherContext();
 			IsAddingWatcher = false;
 
-			NavigationManager.NavigateTo($"/Watchers/Edit/{nextId}");
+			NavigationManager.NavigateTo($"/Settings/Edit/{nextId}");
 		}
 
 		protected void ConfirmDeleteWatcher()
@@ -83,8 +82,8 @@ namespace SiteWatch.Pages
 			if (DeleteWatcher == null)
 				return;
 
-			SettingsProvider.Settings.PageWatchers.Remove(DeleteWatcher);
-			SettingsProvider.Save();
+			WatchersSettingsProvider.Settings.PageWatchers.Remove(DeleteWatcher);
+			WatchersSettingsProvider.Save();
 
 			DeleteWatcher = null;
 		}

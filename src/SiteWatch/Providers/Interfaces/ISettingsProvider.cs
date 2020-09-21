@@ -1,11 +1,7 @@
-﻿using SiteWatch.Models;
-
-namespace SiteWatch.Providers.Interfaces
+﻿namespace SiteWatch.Providers
 {
 	public interface ISettingsProvider
 	{
-		Settings Settings { get; }
-
-		void Save();
+		Models.Settings Settings { get; }
 	}
 }

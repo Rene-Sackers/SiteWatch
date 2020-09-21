@@ -3,8 +3,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SiteWatch.Factories;
+using SiteWatch.Factories.Interfaces;
 using SiteWatch.Providers;
 using SiteWatch.Providers.Interfaces;
+using SiteWatch.Services;
+using SiteWatch.Services.Interfaces;
 
 namespace SiteWatch
 {
@@ -23,7 +27,15 @@ namespace SiteWatch
 		{
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
+
 			services.AddSingleton<ISettingsProvider, SettingsProvider>();
+			services.AddSingleton<IWatchersSettingsProvider, WatchersWatchersSettingsProvider>();
+			services.AddSingleton<IHttpClientProvider, HttpClientProvider>();
+			services.AddSingleton<IWatchService, WatchService>();
+
+			services.AddTransient<IPageScrapeService, PageScrapeService>();
+			services.AddTransient<IPageWatchServiceFactory, PageWatchServiceFactory>();
+			services.AddTransient<INotificationService, TelegramNotificationService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +62,8 @@ namespace SiteWatch
 				endpoints.MapBlazorHub();
 				endpoints.MapFallbackToPage("/_Host");
 			});
+
+			app.ApplicationServices.GetService<IWatchService>().SetUpWatchers();
 		}
 	}
 }

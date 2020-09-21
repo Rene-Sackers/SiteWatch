@@ -1,18 +1,16 @@
 ﻿<div class="popup">
-	<div class="row mt-4">
-		<div class="@(Classes ?? "col-sm-10 col-md-8 col-lg-6 col-xl-4") mx-auto">
-			<div class="card bg-dark">
-				<div class="card-header">
-					@Title
+	<div class="@(Classes ?? "col-sm-10 col-md-8 col-lg-6") my-4 mx-auto">
+		<div class="card bg-dark">
+			<div class="card-header">
+				@Title
+			</div>
+			<div class="card-body">
+				<div class="float-none">
+					@Body
 				</div>
-				<div class="card-body">
-					<div class="float-none">
-						@Body
-					</div>
 
-					<div class="float-right mt-4">
-						@Buttons
-					</div>
+				<div class="float-right mt-4">
+					@Buttons
 				</div>
 			</div>
 		</div>

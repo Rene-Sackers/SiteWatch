@@ -1,9 +1,14 @@
-﻿using System.Collections.Generic;
-
-namespace SiteWatch.Models
+﻿namespace SiteWatch.Models
 {
 	public class Settings
 	{
-		public List<PageWatcher> PageWatchers { get; set; } =  new List<PageWatcher>();
+		public TelegramSettings Telegram { get; set; }
+	}
+
+	public class TelegramSettings
+	{
+		public string ApiToken { get; set; }
+
+		public int ChatId { get; set; }
 	}
 }
