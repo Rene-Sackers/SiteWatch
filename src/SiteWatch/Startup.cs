@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SiteWatch.Extensions;
 using SiteWatch.Factories;
 using SiteWatch.Factories.Interfaces;
 using SiteWatch.Providers;
@@ -29,7 +30,7 @@ namespace SiteWatch
 			services.AddServerSideBlazor();
 
 			services.AddSingleton<ISettingsProvider, SettingsProvider>();
-			services.AddSingleton<IWatchersSettingsProvider, WatchersWatchersSettingsProvider>();
+			services.AddSingleton<IWatchersSettingsProvider, WatchersSettingsProvider>();
 			services.AddSingleton<IHttpClientProvider, HttpClientProvider>();
 			services.AddSingleton<IWatchService, WatchService>();
 			services.AddSingleton<ITelegramBotClientProvider, TelegramBotClientProvider>();
@@ -53,7 +54,7 @@ namespace SiteWatch
 				app.UseHsts();
 			}
 
-			app.UseHttpsRedirection();
+			app.UseIpWhitelist();
 			app.UseStaticFiles();
 
 			app.UseRouting();

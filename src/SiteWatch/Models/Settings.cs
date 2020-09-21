@@ -3,6 +3,8 @@
 	public class Settings
 	{
 		public TelegramSettings Telegram { get; set; }
+
+		public IpFilterSettings IpFilterSettings { get; set; }
 	}
 
 	public class TelegramSettings

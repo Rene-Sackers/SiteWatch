@@ -8,7 +8,7 @@ using SiteWatch.Providers.Interfaces;
 
 namespace SiteWatch.Providers
 {
-	public class WatchersWatchersSettingsProvider : IWatchersSettingsProvider
+	public class WatchersSettingsProvider : IWatchersSettingsProvider
 	{
 		private const string SettingsFileName = "watch.json";
 

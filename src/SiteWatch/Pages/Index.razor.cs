@@ -74,7 +74,7 @@ namespace SiteWatch.Pages
 			SetUpAddWatcherContext();
 			IsAddingWatcher = false;
 
-			NavigationManager.NavigateTo($"/Settings/Edit/{nextId}");
+			NavigationManager.NavigateTo($"/Watchers/Edit/{nextId}");
 		}
 
 		protected void ConfirmDeleteWatcher()

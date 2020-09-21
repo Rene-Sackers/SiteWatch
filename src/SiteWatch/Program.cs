@@ -28,7 +28,7 @@ namespace SiteWatch
 			loggingConfiguration.AddTarget("console", coloredConsoleTarget);
 			loggingConfiguration.AddRule(LogLevel.Trace, LogLevel.Fatal, coloredConsoleTarget);
 
-			var logsFolder = Path.Join(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "logs");
+			var logsFolder = Path.Join(Path.GetFullPath("."), "logs");
 
 			var fileTarget = new FileTarget
 			{

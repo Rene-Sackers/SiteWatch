@@ -36,6 +36,12 @@ namespace SiteWatch.Services
 				"New content:\r\n" +
 				$"{telegramMarkup}";
 
+			if (_settingsProvider.Settings.Telegram.ChatId == 0)
+			{
+				Logger.Error("Telegram chat ID is not configured");
+				return;
+			}
+
 			try
 			{
 				await _telegramBotClientProvider.Client.SendTextMessageAsync(

@@ -8,6 +8,6 @@ namespace SiteWatch.Providers.Interfaces
 		WatchersSettings Settings { get; }
 
 		Task Save(bool trigerSettingsChanged = true);
-		event WatchersWatchersSettingsProvider.SettingsChangedHandler SettingsChanged;
+		event WatchersSettingsProvider.SettingsChangedHandler SettingsChanged;
 	}
 }
