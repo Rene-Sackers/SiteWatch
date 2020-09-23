@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using SiteWatch.Helpers;
+using SiteWatch.Extensions;
 using SiteWatch.Models;
 using SiteWatch.Providers.Interfaces;
 using SiteWatch.Services.Interfaces;
@@ -14,16 +13,17 @@ namespace SiteWatch.Pages.Watchers
 {
 	public class EditWatcherModel
 	{
+		public bool Enabled { get; set; }
+
 		[Required]
 		public string Name { get; set; }
 
 		[Required]
-		public string QuerySelector { get; set; }
-
-		[Required]
 		public string Interval { get; set; }
 
-		public List<string> Urls { get; set; } = new List<string>();
+		public IGetDataAction GetDataAction { get; set; }
+
+		public IParseDataAction ParseDataAction { get; set; }
 	}
 
 	public class AddUrlModel
@@ -46,24 +46,40 @@ namespace SiteWatch.Pages.Watchers
 		[Parameter]
 		public int Id { get; set; }
 
-		protected string DeleteUrl { get; set; }
-
 		protected EditWatcherModel EditWatcherModel { get; set; }
 
 		protected EditContext EditContext { get; set; }
 
 		private ValidationMessageStore _editValidationMessageStore;
 
-		protected AddUrlModel AddUrlModel { get; set; }
-
-		protected EditContext AddUrlEditContext { get; set; }
-
-		private ValidationMessageStore _addUrlValidationMessageStore;
-
 		protected string PreviewQueryHtmlResult { get; set; }
 
 		private PageWatcher _watcher;
-		
+
+		private string _getDataActionName;
+
+		protected string GetDataActionName
+		{
+			get => _getDataActionName;
+			set
+			{
+				_getDataActionName = value;
+				GetDataActionChanged();
+			}
+		}
+
+		private string _parseDataActionName;
+
+		protected string ParseDataActionName
+		{
+			get => _parseDataActionName;
+			set
+			{
+				_parseDataActionName = value;
+				ParseDataActionChanged();
+			}
+		}
+
 		protected override void OnInitialized()
 		{
 			SetUpAddWatcherContext();
@@ -78,68 +94,24 @@ namespace SiteWatch.Pages.Watchers
 				return;
 			}
 
+			GetDataActionName = _watcher.GetDataAction?.GetType().Name ?? nameof(HttpGetAction);
+			ParseDataActionName = _watcher.ParseDataAction?.GetType().Name ?? nameof(HtmlQuerySelectorAction);
 			EditWatcherModel = new EditWatcherModel
 			{
+				Enabled = _watcher.Enabled,
 				Name = _watcher.Name,
-				QuerySelector = _watcher.QuerySelector,
 				Interval = _watcher.Interval.ToString(),
-				Urls = _watcher.Urls.ToList()
+				GetDataAction = _watcher.GetDataAction.Clone() ?? new HttpGetAction(),
+				ParseDataAction = _watcher.ParseDataAction.Clone() ?? new HtmlQuerySelectorAction()
 			};
+
 			EditContext = new EditContext(EditWatcherModel);
 			_editValidationMessageStore = new ValidationMessageStore(EditContext);
 		}
 
-		private void SetUpAddUrlContext()
-		{
-			AddUrlModel = new AddUrlModel();
-			AddUrlEditContext = new EditContext(AddUrlModel);
-			_addUrlValidationMessageStore = new ValidationMessageStore(AddUrlEditContext);
-		}
-
-		protected void ShowAddUrl()
-		{
-			SetUpAddUrlContext();
-		}
-
-		protected void AddUrlSubmit()
-		{
-			_addUrlValidationMessageStore.Clear();
-
-			if (!AddUrlEditContext.Validate())
-				return;
-
-			if (_watcher.Urls.Any(u => string.Equals(u, AddUrlModel.Url, StringComparison.OrdinalIgnoreCase)))
-			{
-				_addUrlValidationMessageStore.Add(() => AddUrlModel.Url, "This URL was already added to the watcher.");
-				return;
-			}
-
-			if (!Uri.TryCreate(AddUrlModel.Url, UriKind.Absolute, out _))
-			{
-				_addUrlValidationMessageStore.Add(() => AddUrlModel.Url, "This is not a valid URL.");
-				return;
-			}
-
-			_watcher.Urls.Add(AddUrlModel.Url);
-			EditWatcherModel.Urls.Add(AddUrlModel.Url);
-			WatchersSettingsProvider.Save();
-
-			AddUrlModel = null;
-		}
-
-		protected void DeleteUrlSubmit()
-		{
-			_watcher.Urls.Remove(DeleteUrl);
-			_watcher.PageStates.Remove(DeleteUrl);
-			EditWatcherModel.Urls.Remove(DeleteUrl);
-			WatchersSettingsProvider.Save();
-
-			DeleteUrl = null;
-		}
-
 		protected async Task PreviewQuery(string url)
 		{
-			PreviewQueryHtmlResult = TelegramHtmlFormatter.HtmlToTelegramFormattedText(await PageScrapeService.GetHtmlForQueryString(url, EditWatcherModel.QuerySelector));
+			//PreviewQueryHtmlResult = TelegramHtmlFormatter.HtmlToTelegramFormattedText(await PageScrapeService.GetHtmlForQueryString(url, EditWatcherModel.QuerySelector));
 		}
 
 		protected void Submit()
@@ -163,13 +135,51 @@ namespace SiteWatch.Pages.Watchers
 				return;
 			}
 
+			_watcher.Enabled = EditWatcherModel.Enabled;
 			_watcher.Name = EditWatcherModel.Name;
-			_watcher.QuerySelector = EditWatcherModel.QuerySelector;
+			_watcher.GetDataAction = EditWatcherModel.GetDataAction;
+			_watcher.ParseDataAction = EditWatcherModel.ParseDataAction;
 			_watcher.Interval = Math.Max(PageWatcher.MinimumInterval, parsedInterval);
 
 			WatchersSettingsProvider.Save();
 
 			NavigationManager.NavigateTo("/");
+		}
+
+		protected void GetDataActionChanged()
+		{
+			if (EditWatcherModel == null)
+				return;
+
+			switch (GetDataActionName)
+			{
+				case nameof(HttpGetAction):
+					EditWatcherModel.GetDataAction = new HttpGetAction();
+					break;
+				case nameof(HttpPostAction):
+					EditWatcherModel.GetDataAction = new HttpPostAction();
+					break;
+			}
+
+			StateHasChanged();
+		}
+
+		protected void ParseDataActionChanged()
+		{
+			if (EditWatcherModel == null)
+				return;
+
+			switch (ParseDataActionName)
+			{
+				case nameof(HtmlQuerySelectorAction):
+					EditWatcherModel.ParseDataAction = new HtmlQuerySelectorAction();
+					break;
+				case nameof(JsonPathAction):
+					EditWatcherModel.ParseDataAction = new JsonPathAction();
+					break;
+			}
+
+			StateHasChanged();
 		}
 	}
 }

@@ -43,9 +43,9 @@
 	<table class="table text-light">
 		<thead>
 			<tr>
+				<th></th>
 				<th>Id</th>
 				<th>Name</th>
-				<th>Query selector</th>
 				<th>Urls</th>
 				<th>Interval</th>
 				<th></th>
@@ -55,9 +55,11 @@
 			@foreach (var watcher in WatchersSettingsProvider.Settings.PageWatchers)
 			{
 				<tr>
+					<td>
+						<input type="checkbox" disabled="disabled" checked="@(watcher.Enabled ? "checked" : null)"/>
+					</td>
 					<td>@watcher.Id</td>
 					<td>@watcher.Name</td>
-					<td>@watcher.QuerySelector</td>
 					<td>
 						@((MarkupString) string.Join("<br>", watcher.Urls))
 					</td>

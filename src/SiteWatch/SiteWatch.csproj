@@ -26,4 +26,13 @@
     <TypeScriptCompile Include="wwwroot\ts\Index.ts" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Pages\Watchers\EditActions\EditHttpAction - Copy.razor.cs">
+      <DependentUpon>EditHttpAction.razor.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Pages\Watchers\EditActions\EditHttpGetAction - Copy.razor.cs">
+      <DependentUpon>EditHttpGetAction.razor.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>

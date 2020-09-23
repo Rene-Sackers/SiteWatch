@@ -1,0 +1,11 @@
+﻿@using SiteWatch.Models
+
+<div class="form-group col-md-6">
+	<label for="@nameof(JsonPathAction.Path)">JSON Path</label>
+	<input class="form-control" @bind="JsonPathAction.Path" />
+</div>
+
+@code {
+	[Parameter]
+	public JsonPathAction JsonPathAction { get; set; }
+}

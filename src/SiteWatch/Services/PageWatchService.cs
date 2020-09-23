@@ -73,29 +73,29 @@ namespace SiteWatch.Services
 
 		private async Task ScrapePages()
 		{
-			foreach (var url in _watcher.Urls)
-			{
-				var newHtml = await _pageScrapeService.GetHtmlForQueryString(url, _watcher.QuerySelector);
+			//foreach (var url in _watcher.Urls)
+			//{
+			//	var newHtml = await _pageScrapeService.GetHtmlForQueryString(url, _watcher.QuerySelector);
 
-				if (!_watcher.PageStates.ContainsKey(url))
-					_watcher.PageStates.Add(url, new PageState());
+			//	if (!_watcher.PageStates.ContainsKey(url))
+			//		_watcher.PageStates.Add(url, new PageState());
 
-				var pageState = _watcher.PageStates[url];
+			//	var pageState = _watcher.PageStates[url];
 
-				pageState.LastCheck = DateTimeOffset.Now;
+			//	pageState.LastCheck = DateTimeOffset.Now;
 
-				if (pageState.LastHtml == newHtml)
-					continue;
+			//	if (pageState.LastHtml == newHtml)
+			//		continue;
 
-				pageState.LastChange = DateTimeOffset.Now;
+			//	pageState.LastChange = DateTimeOffset.Now;
 
 
-				await _notificationService.NotifyPageChanged(_watcher, url, pageState.LastHtml, newHtml);
+			//	await _notificationService.NotifyPageChanged(_watcher, url, pageState.LastHtml, newHtml);
 
-				pageState.LastHtml = newHtml;
+			//	pageState.LastHtml = newHtml;
 
-				await _watchersSettingsProvider.Save(false);
-			}
+			//	await _watchersSettingsProvider.Save(false);
+			//}
 		}
 
 		public void Dispose()

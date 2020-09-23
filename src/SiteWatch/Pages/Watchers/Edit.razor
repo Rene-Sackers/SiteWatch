@@ -1,40 +1,7 @@
 ﻿@page "/Watchers/Edit/{Id:int}"
+@using SiteWatch.Models
+@using SiteWatch.Pages.Watchers.EditActions
 @inherits EditBase
-
-@if (AddUrlModel != null)
-{
-	<Popup Title="Add URL">
-		<Body>
-			<EditForm EditContext="AddUrlEditContext" OnSubmit="AddUrlSubmit">
-				<DataAnnotationsValidator />
-
-				<div class="form-group">
-					<label for="@nameof(AddUrlModel.Url)">URL</label>
-					<InputText @bind-Value="AddUrlModel.Url" class="form-control"/>
-					<ValidationMessage For="@(() => AddUrlModel.Url)" />
-				</div>
-
-				<div class="form-group text-right">
-					<button class="btn btn-light" type="button" @onclick="() => AddUrlModel = null">Cancel</button>
-					<button class="btn btn-primary" type="submit">Add</button>
-				</div>
-			</EditForm>
-		</Body>
-	</Popup>
-}
-
-@if (DeleteUrl != null)
-{
-	<Popup Title="Delete URL">
-		<Body>
-			Are you sure you want to delete the URL "@DeleteUrl"?
-		</Body>
-		<Buttons>
-			<button class="btn btn-light" type="button" @onclick="() => DeleteUrl = null">Cancel</button>
-			<button class="btn btn-danger" type="button" @onclick="DeleteUrlSubmit">Delete</button>
-		</Buttons>
-	</Popup>
-}
 
 @if (PreviewQueryHtmlResult != null)
 {
@@ -56,17 +23,18 @@
 
 		<div class="form-row">
 			<div class="form-group col-md-6">
-				<label for="@nameof(EditWatcherModel.Name)">Name</label>
-				<InputText id="@nameof(EditWatcherModel.Name)" @bind-Value="EditWatcherModel.Name" class="form-control" />
-				<ValidationMessage For="@(() => EditWatcherModel.Name)" />
+				<label for="@nameof(EditWatcherModel.Enabled)">
+					Enabled<br/>
+					<InputCheckbox id="@nameof(EditWatcherModel.Enabled)" @bind-Value="EditWatcherModel.Enabled" />
+				</label>
 			</div>
 		</div>
 
 		<div class="form-row">
 			<div class="form-group col-md-6">
-				<label for="@nameof(EditWatcherModel.QuerySelector)">Query selector</label>
-				<InputText id="@nameof(EditWatcherModel.QuerySelector)" @bind-Value="EditWatcherModel.QuerySelector" class="form-control" />
-				<ValidationMessage For="@(() => EditWatcherModel.QuerySelector)" />
+				<label for="@nameof(EditWatcherModel.Name)">Name</label>
+				<InputText id="@nameof(EditWatcherModel.Name)" @bind-Value="EditWatcherModel.Name" class="form-control" />
+				<ValidationMessage For="@(() => EditWatcherModel.Name)" />
 			</div>
 		</div>
 
@@ -78,31 +46,45 @@
 			</div>
 		</div>
 
-		<div class="form-group">
-			<label>URLs</label>
-			<table class="table text-light">
-				<tbody>
-					@foreach (var url in EditWatcherModel.Urls)
-					{
-						<tr>
-							<td>
-								<a href="@url" target="_blank">@url</a>
-							</td>
-							<td>
-								<button class="btn btn-primary" type="button" @onclick="() => PreviewQuery(url)">Preview query</button>
-								<button class="btn btn-danger" type="button" @onclick="() => DeleteUrl = url">Delete</button>
-							</td>
-						</tr>
-					}
-				</tbody>
-				<tfoot>
-					<tr>
-						<td colspan="2" class="text-center">
-							<button class="btn btn-success" type="button" @onclick="ShowAddUrl">Add</button>
-						</td>
-					</tr>
-				</tfoot>
-			</table>
+		<div class="form-row">
+			<div class="form-group col-md-6">
+				<label for="@nameof(GetDataActionName)">Get data action</label>
+				<select id="@nameof(GetDataActionName)" @bind="GetDataActionName" class="form-control">
+					<option value="@nameof(HttpGetAction)">HTTP GET</option>
+					<option value="@nameof(HttpPostAction)">HTTP POST</option>
+				</select>
+			</div>
+		</div>
+		
+		<div class="pl-4 sub-section">
+			@switch (EditWatcherModel.GetDataAction)
+			{
+				case HttpAction httpAction:
+					<EditHttpAction HttpAction="httpAction" />
+					break;
+			}
+		</div>
+
+		<div class="form-row">
+			<div class="form-group col-md-6">
+				<label for="@nameof(ParseDataActionName)">Parse data action</label>
+				<select id="@nameof(ParseDataActionName)" @bind="ParseDataActionName" class="form-control">
+					<option value="@nameof(HtmlQuerySelectorAction)">HTML query selector</option>
+					<option value="@nameof(JsonPathAction)">JSON path</option>
+				</select>
+			</div>
+		</div>
+		
+		<div class="pl-4 sub-section">
+			@switch (EditWatcherModel.ParseDataAction)
+			{
+				case HtmlQuerySelectorAction htmlQuerySelectorAction:
+					<EditHtmlQuerySelectorAction HtmlQuerySelectorAction="htmlQuerySelectorAction" />
+					break;
+				case JsonPathAction jsonPathAction:
+					<EditJsonPathAction JsonPathAction="jsonPathAction" />
+					break;
+			}
 		</div>
 
 		<div class="form-row">

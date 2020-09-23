@@ -1,0 +1,49 @@
+﻿@using SiteWatch.Models
+<table class="table text-light">
+	<thead>
+		<tr>
+			<th>Key</th>
+			<th>Value</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var value in KeyValueList)
+		{
+			<tr>
+				<td>
+					<input class="form-control" @bind="value.Key"/>
+				</td>
+				<td>
+					<input class="form-control" @bind="value.Value" />
+				</td>
+				<td>
+					<button type="button" class="btn btn-danger" @onclick="() => DeleteClicked(value)">Delete</button>
+				</td>
+			</tr>
+		}
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="3" class="text-center">
+				<button type="button" class="btn btn-success" @onclick="AddClicked">Add</button>
+			</td>
+		</tr>
+	</tfoot>
+</table>
+
+@code {
+
+	[Parameter]
+	public List<KeyValueItem> KeyValueList { get; set; }
+
+	private void AddClicked()
+	{
+		KeyValueList.Add(new KeyValueItem());
+	}
+
+	private void DeleteClicked(KeyValueItem itemToDelete)
+	{
+		KeyValueList.Remove(itemToDelete);
+	}
+}
